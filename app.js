@@ -30,6 +30,9 @@ connectTODatabase()
 
 
  
+app.get("/",(req,res,next)=>{
+  res.send("working fine")
+})
 
 
 const userRouter = require('./router/userRouter') 
