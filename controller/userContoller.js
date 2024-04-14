@@ -1,4 +1,7 @@
 const fs = require("fs");
+const path = require('path');
+
+
 
 const catchAsyncErorr = require("../middleware/catchAsyncErorr");
 const userModel = require("../model/userModel");
@@ -13,10 +16,13 @@ function verifyOTP(req, res, next) {
   }
 
   const way = email || phone;
+  
+  const directoryPath = path.join(__dirname, '../otp-storage');
+  const filePath = path.join(directoryPath, `${way}.json`);
 
 
   // Read the OTP file
-  fs.readFile(`./otp-storage/${way}.json`, (err, data) => {
+  fs.readFile(filePath, (err, data) => {
     if (err) {
       return next(new ErrorHandler("OTP Expired", 500));
     }
@@ -26,7 +32,7 @@ function verifyOTP(req, res, next) {
       otpData.otp === otp &&
       new Date().getTime() - otpData.createdAt < 800000
     ) {
-      fs.unlink(`./otp-storage/${way}.json`, (err) => {
+      fs.unlink(filePath, (err) => {
         // Delete the OTP file after verification
         if (err) {
           return next(new ErrorHandler("Failed to delete OTP", 500));
