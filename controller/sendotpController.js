@@ -78,7 +78,7 @@ exports.sendOTP_email = catchAsyncErorr(async (req, res, next) => {
 
   let message = {
     from: `"${process.env.PRODUCT_NAME}", <${req.params.email}>`, // sender address
-    to: `${process.env.MAIL_GMAIL}`, // list of receivers
+    to: `${req.params.email}`, // list of receivers
     subject: `OTP Varification`, // Subject line
     text: "", // plain text body
     html: `
@@ -129,7 +129,7 @@ exports.sendOTP_email = catchAsyncErorr(async (req, res, next) => {
     </head>
     <body>
       <div class="container">
-        <h1>Contact Form Response</h1>
+        <h1>OTP</h1>
         <div class="response">
             Your OTP is ${otp}
         </div>
