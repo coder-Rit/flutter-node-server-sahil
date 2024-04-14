@@ -6,21 +6,17 @@ const validator = require("validator")
 
 
 const userSchema = new mongoose.Schema({
-    username: {
-        type: String,
-        required: true,
-        unique: [true, "This username is aleady taken"],
-        minLength: [6, "Username is too short"],
-        maxLength: [14, "Username is too big"],
-    },
     email: {
         type: String,
         trim: true,
         lowercase: true,
-        unique: [true, "This email is aleady registerd"],
-        required: [true, "Email address is required"],
+        unique: [true, "This Email is aleady registerd"],
         validate: [validator.isEmail, "Please Enter a valid Email"]
-
+    },
+    phone: {
+        type: String, 
+        unique: [true, "This Number is aleady registerd"],
+        validate: [validator.isMobilePhone, "Please Enter a valid Phone Number"]
     },
     password: {
         type: String,
@@ -28,28 +24,7 @@ const userSchema = new mongoose.Schema({
         select: false,
         minLength: [6, "Password is too short"],
         maxLength: [12, "Password is too big"],
-    },
-    role:{
-        type: String,
-        default:"teacher",
     }, 
-      
-    clgShortName:{
-        type: String, 
-        default:""
-    },
-    status:{
-        type:String,
-        default:"unBand"
-    },
-    settings:{
- type:Object,
- default:{
-    theme:"light_theme"
- }
-    },
-    resetPasswordToken: String,
-    resetPasswordExpire: Date,
 })
 
 // converting password into hash
