@@ -34,7 +34,6 @@ app.get("/",(req,res,next)=>{
   res.send("working fine")
 })
 
-
 const userRouter = require('./router/userRouter') 
 const messageRouter = require('./router/messageRouter') 
 const uploadsRouter = require('./router/uploadsRouter') 

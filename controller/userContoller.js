@@ -11,56 +11,53 @@ const sendJwt = require("../utils/sendJwt");
 function verifyOTP(req, res, next) {
   const { email, phone, otp } = req.body;
 
-  if (!(email || phone) || !otp) {
-    return next(new ErrorHandler("Email and OTP are required", 400));
+  if (!otp || !(email || phone)) {
+    return next(new ErrorHandler("Email or phone and OTP are required", 400));
   }
 
   const way = email || phone;
-  
   const directoryPath = path.join(__dirname, '../otp-storage');
   const filePath = path.join(directoryPath, `${way}.json`);
 
-
-  // Read the OTP file
   fs.readFile(filePath, (err, data) => {
     if (err) {
-      return next(new ErrorHandler("OTP Expired", 500));
+      return next(new ErrorHandler("OTP Expired or not found", 404));
     }
     const otpData = JSON.parse(data);
-    // Check if OTP is correct and not expired (e.g., 5 minutes)
-    if (
-      otpData.otp === otp &&
-      new Date().getTime() - otpData.createdAt < 800000
-    ) {
-      fs.unlink(filePath, (err) => {
-        // Delete the OTP file after verification
-        if (err) {
-          return next(new ErrorHandler("Failed to delete OTP", 500));
-        }
-      });
-    } else {
-      return next(new ErrorHandler("Invalid or expired OTP", 400));
-    }
+
+    const isOtpValid = otpData.otp === otp;
+    const isOtpExpired = new Date().getTime() - otpData.createdAt >= 300000; // 5 minutes
+
+    fs.unlink(filePath, err => {
+      if (err) {
+        console.log("Failed to delete OTP file:", err);
+      }
+      if (!isOtpValid || isOtpExpired) {
+        return next(new ErrorHandler("Invalid or expired OTP", 400));
+      }
+      next(); // Proceed if OTP is valid and not expired
+    });
   });
 }
 
+
 // signUp
 exports.signUp = catchAsyncErorr(async (req, res, next) => {
-  verifyOTP(req, res, next);
+  verifyOTP(req, res, async () => {
+    let userData = { ...req.body };
+    delete userData.otp;
 
-  let a = req.body;
-  delete a.OTP;
-
-  const newAcc = await userModel.create(a);
-  sendJwt(newAcc, res, "Account is crated successfully", 201, req);
+    const newAcc = await userModel.create(userData);
+    sendJwt(newAcc, res, "Account created successfully", 201, req);
+  });
 });
+
 
 // loged in
 exports.login = catchAsyncErorr(async (req, res, next) => {
   const { email, password, phone } = req.body;
 
   let way;
-
   if (email) {
     way = {
       type: "email",
@@ -68,25 +65,25 @@ exports.login = catchAsyncErorr(async (req, res, next) => {
     };
   } else if (phone) {
     way = {
-      type: "email",
-      selector: email,
+      type: "phone",
+      selector: phone,
     };
   } else {
-    return next(new ErrorHandler(`Please provide credentials`, 400));
+    return next(new ErrorHandler("Please provide email or phone credentials", 400));
   }
 
-  const user = await userModel.findOne({ [way.type]:way.selector }).select("+password");
+  const user = await userModel.findOne({ [way.type]: way.selector }).select("+password");
   if (!user) {
-    return next(new ErrorHandler("User does not exist", 400));
+    return next(new ErrorHandler("User does not exist", 404));
   }
   const isPasswordMatched = await user.comparePassword(password);
-
   if (!isPasswordMatched) {
-    return next(new ErrorHandler("Wrong Password", 404));
+    return next(new ErrorHandler("Incorrect password", 401));
   }
 
-  sendJwt(user, res, "LogeIn Successfully", 200, req);
+  sendJwt(user, res, "Logged in successfully", 200, req);
 });
+
 
 // log out
 exports.logOut = catchAsyncErorr((req, res, next) => {
