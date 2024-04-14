@@ -14,7 +14,6 @@ function verifyOTP(req, res, next) {
 
   const way = email || phone;
 
-  console.log(way);
 
   // Read the OTP file
   fs.readFile(`./otp-storage/${way}.json`, (err, data) => {
@@ -22,7 +21,6 @@ function verifyOTP(req, res, next) {
       return next(new ErrorHandler("OTP Expired", 500));
     }
     const otpData = JSON.parse(data);
-    console.log(otpData);
     // Check if OTP is correct and not expired (e.g., 5 minutes)
     if (
       otpData.otp === otp &&
@@ -80,7 +78,6 @@ exports.login = catchAsyncErorr(async (req, res, next) => {
   if (!isPasswordMatched) {
     return next(new ErrorHandler("Wrong Password", 404));
   }
-  console.log(user);
 
   sendJwt(user, res, "LogeIn Successfully", 200, req);
 });

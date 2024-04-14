@@ -16,13 +16,11 @@ function saveOpt(way,otp,res,next) {
   const otpData = { way, otp, createdAt: new Date().getTime() };
 
   // Store OTP with email in a file
-  console.log(way);
   fs.writeFile(`./otp-storage/${way}.json`, JSON.stringify(otpData), (err) => {
       if (err) {
-        console.log(err);
         return next(new ErrorHandler("Failed to store OTP", 500));
       }
-      res.send('OTP sent successfully');
+      
   });
   
 }
@@ -60,7 +58,6 @@ exports.sendOTP_phone = catchAsyncErorr(async (req, res, next) => {
   
   
   req.end(function (res) {
-    console.log(res);
     if (res.error) throw new Error(res.error);
     saveOpt(phone,otp,res,next)
   });
@@ -169,7 +166,6 @@ exports.sendOTP_email = catchAsyncErorr(async (req, res, next) => {
         });
       })
       .catch((error) => {
-        console.log(error);
         return res.status(500).json({ error });
       });
    
