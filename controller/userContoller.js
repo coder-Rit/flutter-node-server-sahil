@@ -19,6 +19,8 @@ function verifyOTP(req, res, next) {
   const directoryPath = path.join(__dirname, '../otp-storage');
   const filePath = path.join(directoryPath, `${way}.json`);
 
+  console.log(filePath);
+
   fs.readFile(filePath, (err, data) => {
     if (err) {
       return next(new ErrorHandler("OTP Expired or not found", 404));
