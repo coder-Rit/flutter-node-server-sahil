@@ -8,6 +8,7 @@ const userModel = require("../model/userModel");
 const ErrorHandler = require("../utils/errorHandler");
 const sendJwt = require("../utils/sendJwt");
 
+ // Updated verifyOTP function
 function verifyOTP(req, res, next) {
   const { email, phone, otp } = req.body;
 
@@ -37,22 +38,31 @@ function verifyOTP(req, res, next) {
       if (!isOtpValid || isOtpExpired) {
         return next(new ErrorHandler("Invalid or expired OTP", 400));
       }
-      next(); // Proceed if OTP is valid and not expired
+      // Call next only if OTP is valid and not expired
+      next();
     });
   });
 }
 
-
-// signUp
+// Updated signUp function to handle errors properly
 exports.signUp = catchAsyncErorr(async (req, res, next) => {
-  verifyOTP(req, res, async () => {
+  verifyOTP(req, res, async (err) => {
+    if (err) {
+      return next(err); // Pass any errors from verifyOTP to the error handler
+    }
+
     let userData = { ...req.body };
     delete userData.otp;
 
-    const newAcc = await userModel.create(userData);
-    sendJwt(newAcc, res, "Account created successfully", 201, req);
+    try {
+      const newAcc = await userModel.create(userData);
+      sendJwt(newAcc, res, "Account created successfully", 201, req);
+    } catch (error) {
+      return next(new ErrorHandler("Failed to create account", 500));
+    }
   });
 });
+
 
 
 // loged in
