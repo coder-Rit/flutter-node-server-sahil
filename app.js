@@ -36,12 +36,10 @@ app.get("/",(req,res,next)=>{
 
 const userRouter = require('./router/userRouter') 
 const messageRouter = require('./router/messageRouter') 
-const uploadsRouter = require('./router/uploadsRouter') 
  
 
 app.use("/api/v1", userRouter)
 app.use("/api/v1", messageRouter)
-app.use("/api/v1", uploadsRouter)
  
 
  

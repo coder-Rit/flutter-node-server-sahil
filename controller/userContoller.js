@@ -1,26 +1,22 @@
 const fs = require("fs");
-const path = require('path');
-
-
+const path = require("path");
 
 const catchAsyncErorr = require("../middleware/catchAsyncErorr");
 const userModel = require("../model/userModel");
 const ErrorHandler = require("../utils/errorHandler");
 const sendJwt = require("../utils/sendJwt");
 
- // Updated verifyOTP function
-function verifyOTP(req, res, next) {
-  const { email, phone, otp } = req.body;
+// these fuction are in
 
-  if (!otp || !(email || phone)) {
+// Updated verifyOTP function
+function verifyOTP(req, res, next) {
+  const { phone, otp } = req.body;
+  if (!otp || !phone) {
     return next(new ErrorHandler("Email or phone and OTP are required", 400));
   }
 
-  const way = email || phone;
-  const directoryPath = path.join(__dirname, '../otp-storage');
-  const filePath = path.join(directoryPath, `${way}.json`);
-
-  console.log(filePath);
+  const directoryPath = path.join(__dirname, "../otp-storage");
+  const filePath = path.join(directoryPath, `${phone}.json`);
 
   fs.readFile(filePath, (err, data) => {
     if (err) {
@@ -28,13 +24,17 @@ function verifyOTP(req, res, next) {
     }
     const otpData = JSON.parse(data);
 
-    const isOtpValid = otpData.otp === otp;
-    const isOtpExpired = new Date().getTime() - otpData.createdAt >= 300000; // 5 minutes
+    console.log(otpData.otp, otp);
+    console.log(new Date().getTime() - otpData.createdAt >= 300000);
 
-    fs.unlink(filePath, err => {
+    const isOtpValid = otpData.otp === otp;
+    const isOtpExpired = new Date().getTime() - otpData.createdAt >= 800000; // 5 minutes
+
+    fs.unlink(filePath, (err) => {
       if (err) {
         console.log("Failed to delete OTP file:", err);
       }
+      console.log(isOtpValid, isOtpExpired);
       if (!isOtpValid || isOtpExpired) {
         return next(new ErrorHandler("Invalid or expired OTP", 400));
       }
@@ -44,47 +44,54 @@ function verifyOTP(req, res, next) {
   });
 }
 
-// Updated signUp function to handle errors properly
-exports.signUp = catchAsyncErorr(async (req, res, next) => {
+function generateRandomString(length) {
+  let result = "";
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const charactersLength = characters.length;
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
+
+// verfy a phone number
+exports.verfiyPhoneusingOTP = catchAsyncErorr(async (req, res, next) => {
   verifyOTP(req, res, async (err) => {
     if (err) {
       return next(err); // Pass any errors from verifyOTP to the error handler
     }
-
-    let userData = { ...req.body };
-    delete userData.otp;
-
-    try {
-      const newAcc = await userModel.create(userData);
-      sendJwt(newAcc, res, "Account created successfully", 201, req);
-    } catch (error) {
-      return next(new ErrorHandler("Failed to create account", 500));
-    }
+    res.status(200).json({
+      msg: "OTP Verified successfully",
+      status:"success"
+    });
   });
 });
 
+// Updated signUp function to handle errors properly
+exports.signUp = catchAsyncErorr(async (req, res, next) => {
+
+  const student_id = `${req.body.name.split(" ")[0]}_${generateRandomString(
+    6
+  )}`;
+  let userData = {
+    ...req.body,
+    student_id,
+  };
+
+  const newAcc = await userModel.create(userData);
+  sendJwt(newAcc, res, "Account created successfully", 201, req);
+});
 
 
 // loged in
 exports.login = catchAsyncErorr(async (req, res, next) => {
-  const { email, password, phone } = req.body;
+  const { password, student_id } = req.body;
 
-  let way;
-  if (email) {
-    way = {
-      type: "email",
-      selector: email,
-    };
-  } else if (phone) {
-    way = {
-      type: "phone",
-      selector: phone,
-    };
-  } else {
-    return next(new ErrorHandler("Please provide email or phone credentials", 400));
-  }
+  const user = await userModel
+    .findOne({  student_id })
+    .select("+password");
 
-  const user = await userModel.findOne({ [way.type]: way.selector }).select("+password");
   if (!user) {
     return next(new ErrorHandler("User does not exist", 404));
   }
@@ -96,7 +103,6 @@ exports.login = catchAsyncErorr(async (req, res, next) => {
   sendJwt(user, res, "Logged in successfully", 200, req);
 });
 
-
 // log out
 exports.logOut = catchAsyncErorr((req, res, next) => {
   res
@@ -107,5 +113,6 @@ exports.logOut = catchAsyncErorr((req, res, next) => {
     .json({
       msg: "logout successfully",
       logOut: true,
+      status:"success"
     });
 });

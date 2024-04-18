@@ -1,12 +1,14 @@
 const express = require('express')
-const {  sendOTP_phone, sendOTP_email } = require('../controller/sendotpController')
+const {  sendOTP_phone } = require('../controller/sendotpController')
+const { verfiyPhoneusingOTP } = require('../controller/userContoller')
  
  
 
 const Router = express.Router()
 
-Router.route("/sendOTP_phone/:phone").post(sendOTP_phone) 
-Router.route("/sendOTP_email/:email").post(sendOTP_email) 
+Router.route("/sendOTP_phone").post(sendOTP_phone) 
+Router.route("/verfiyPhoneusingOTP").post(verfiyPhoneusingOTP) 
+ 
  
  
 

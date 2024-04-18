@@ -1,22 +1,22 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const validator = require("validator")
-
 
 
 const userSchema = new mongoose.Schema({
-    email: {
+    student_id:{
         type: String,
-        trim: true,
-        lowercase: true,
-        unique: [true, "This Email is aleady registerd"],
-        validate: [validator.isEmail, "Please Enter a valid Email"]
+        unique:[true,"Something went wrong please try again"],
+        required:true
+    },
+    name:{
+        type: String, 
+        required:true
     },
     phone: {
-        type: String, 
-        unique: [true, "This Number is aleady registerd"],
-        validate: [validator.isMobilePhone, "Please Enter a valid Phone Number"]
+        type: Number, 
+        unique:[true,"Phone number already in use"],
+        match: /^[0-9]{10}$/
     },
     password: {
         type: String,
@@ -25,6 +25,43 @@ const userSchema = new mongoose.Schema({
         minLength: [6, "Password is too short"],
         maxLength: [12, "Password is too big"],
     }, 
+    type:{
+        type:String,
+        require:true
+    },
+    grade:{
+        type:String
+    },
+    stream:{
+        type:String
+    },
+    checkBoxDaata:{
+        acadmics:{
+            type:Boolean,
+            default:false
+        },
+        competitiveExams:{
+            type:Boolean,
+            default:false
+        },
+        skillDevelopment:{
+            type:Boolean,
+            default:false
+        },
+        digitalCompetancy:{
+            type:Boolean,
+            default:false
+        },
+        mentoringGuidance:{
+            type:Boolean,
+            default:false
+        },
+        examUpdate:{
+            type:Boolean,
+            default:false
+        },
+    }
+
 })
 
 // converting password into hash

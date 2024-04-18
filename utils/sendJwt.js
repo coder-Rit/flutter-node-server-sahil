@@ -15,9 +15,10 @@ module.exports = (user, res, msg, statusCode,req) => {
    
  
   res.status(statusCode).cookie("token", Token, options).json({
+    status:"success",
     msg: msg,
     user: user,
-    Token: Token,
+    Token: Token
   });
 
    

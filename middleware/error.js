@@ -34,7 +34,7 @@ module.exports = (err,req,res,next)=>{
 
 
     res.status(err.statusCode).json({
-        status:false,
+        status:"fail",
         msg:err.message
     })
 }
