@@ -1,6 +1,5 @@
 const express = require('express')
-const {  sendOTP_phone } = require('../controller/sendotpController')
-const { verfiyPhoneusingOTP } = require('../controller/userContoller')
+const { sendOTP_phone, verfiyPhoneusingOTP } = require('../controller/sendotpController')
  
  
 

@@ -22,7 +22,39 @@ function saveOpt(way, otp, res, next) {
       return next(new ErrorHandler("Failed to store OTP", 500));
     }
   });
+} 
+
+ function verifyOTP(req, res, next) {
+  const { phone, otp } = req.body;
+  if (!otp || !phone) {
+    return next(new ErrorHandler("Email or phone and OTP are required", 400));
+  }
+
+  const directoryPath = path.join(__dirname, "../otp-storage");
+  const filePath = path.join(directoryPath, `${phone}.json`);
+
+  fs.readFile(filePath, (err, data) => {
+    if (err) {
+      return next(new ErrorHandler("OTP Expired or not found", 404));
+    }
+    const otpData = JSON.parse(data);
+    const isOtpValid = otpData.otp === otp;
+    const isOtpExpired = new Date().getTime() - otpData.createdAt >= 800000; // 5 minutes
+
+    fs.unlink(filePath, (err) => {
+      if (err) {
+        console.log("Failed to delete OTP file:", err);
+      }
+      console.log(isOtpValid, isOtpExpired);
+      if (!isOtpValid || isOtpExpired) {
+        return next(new ErrorHandler("Invalid or expired OTP", 400));
+      }
+      // Call next only if OTP is valid and not expired
+      next();
+    });
+  });
 }
+
 
 // send OTP using phone
 exports.sendOTP_phone = catchAsyncErorr(async (req, res, next) => {
@@ -62,4 +94,15 @@ exports.sendOTP_phone = catchAsyncErorr(async (req, res, next) => {
   });
 });
 
- 
+// verfy a phone number
+exports.verfiyPhoneusingOTP = catchAsyncErorr(async (req, res, next) => {
+  verifyOTP(req, res, async (err) => {
+    if (err) {
+      return next(err); // Pass any errors from verifyOTP to the error handler
+    }
+    res.status(200).json({
+      msg: "OTP Verified successfully",
+      status: "success",
+    });
+  });
+});
