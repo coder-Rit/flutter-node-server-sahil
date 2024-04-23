@@ -39,6 +39,7 @@ const messageRouter = require('./router/messageRouter')
 const courseRouter = require('./router/courseRouter') 
 const assignmentRouter = require('./router/assignmentRouter') 
 const syllabusRouter = require('./router/syllabusRouter') 
+const videoLectureRouter = require('./router/videoLectureRouter') 
  
 
 app.use("/api/v1", userRouter)
@@ -46,6 +47,7 @@ app.use("/api/v1", messageRouter)
 app.use("/api/v1", courseRouter)
 app.use("/api/v1", assignmentRouter)
 app.use("/api/v1", syllabusRouter)
+app.use("/api/v1", videoLectureRouter)
  
 
  

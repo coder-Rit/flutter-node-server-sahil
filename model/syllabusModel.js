@@ -12,6 +12,7 @@ const syllabusSchema = new mongoose.Schema({
     {
       name: {
         type: String,
+        unique:true,
         required: true,
       },
       description: {
@@ -22,13 +23,14 @@ const syllabusSchema = new mongoose.Schema({
         {
           name: {
             type: String,
+            unique:true,
             required: true,
           },
           description: {
             type: String,
             required: true,
           },
-          complated: {
+          completed: {
             type: Boolean,
             default: false,
           },

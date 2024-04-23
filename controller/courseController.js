@@ -35,7 +35,7 @@ exports.searchCourseByCategory = catchAsyncError(async (req, res, next) => {
 // Create Course API
 exports.createCourse = catchAsyncError(async (req, res, next) => {
   const course = await courseModel.create(req.body);
-  res.status(200).json({
+  res.status(201).json({
     status: "success",
     data: course,
   });
