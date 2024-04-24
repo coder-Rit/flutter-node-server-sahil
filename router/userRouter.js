@@ -1,5 +1,5 @@
 const express = require('express')
-const { student_signUp, student_login, student_resetPassword } = require('../controller/studentContoller')
+const { student_signUp, student_login, student_resetPassword, enrolledStudentIntoCourse, followClass } = require('../controller/studentContoller')
 const { educator_signUp, educator_login, educator_resetPassword } = require('../controller/educatorController')
  
 
@@ -9,6 +9,8 @@ const Router = express.Router()
 Router.route("/student/signup").post(student_signUp) 
 Router.route("/student/login").post(student_login)
 Router.route("/student/resetPass").post(student_resetPassword)
+
+Router.route("/student/class/follow").post(followClass)
 
 // user --> educator
 Router.route("/educator/signup").post(educator_signUp) 

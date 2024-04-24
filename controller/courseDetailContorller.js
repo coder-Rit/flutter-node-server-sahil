@@ -2,6 +2,28 @@ const catchAsyncError = require("../middleware/catchAsyncErorr");
 const courseDetailsModel = require("../model/courseDetailsModel");
 const ErrorHandler = require("../utils/errorHandler");
 
+
+// get course details api 
+exports.getCourseDetails = catchAsyncError(async (req, res, next) => {
+  const { courseId } = req.body;
+  if (!courseId) {
+    return next(new ErrorHandler("courseId not found", 404));
+  }
+
+  const courseDetail = await courseDetailsModel.findOne( {
+    courseId
+  }
+  );
+  
+  if (!courseDetail) {
+    return next(new ErrorHandler("CourseDetail not found", 404));
+  }
+  res.status(200).json({
+    status: "success",
+    data: courseDetail,
+  });
+});
+
 // Create CourseDetail API
 exports.createCourseDetail = catchAsyncError(async (req, res, next) => {
   const courseDetail = await courseDetailsModel.create(req.body);

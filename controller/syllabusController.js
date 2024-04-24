@@ -2,7 +2,6 @@ const { default: mongoose } = require("mongoose");
 const catchAsyncErorr = require("../middleware/catchAsyncErorr");
 const SyllabusModel = require("../model/syllabusModel");
 const ErrorHandler = require("../utils/errorHandler");
-const syllabusModel = require("../model/syllabusModel");
 const videoLectureModel = require("../model/videoLectureModel");
 
 async function idModuleFound(courseId, moduleName, next) {
@@ -35,6 +34,26 @@ exports.getSyllabus = catchAsyncErorr(async (req, res, next) => {
   const Syllabus = await SyllabusModel.find({
     courseId,
   });
+  
+  res.status(200).json({
+    status: "success",
+    data: Syllabus,
+  });
+});
+
+
+
+// get module API
+exports.getModule = catchAsyncErorr(async (req, res, next) => {
+  const { syllabusId, ModuleName } = req.body;
+
+  const Syllabus = await SyllabusModel.findOne(
+    { _id:syllabusId , "modules.name": ModuleName},
+  );
+
+  if (!Syllabus) {
+    return next(new ErrorHandler("Unable to find module", 500));
+  }
   res.status(200).json({
     status: "success",
     data: Syllabus,
@@ -104,6 +123,28 @@ exports.editModule = catchAsyncErorr(async (req, res, next) => {
     data: Syllabus,
   });
 });
+
+
+
+
+
+// get module API
+exports.getLesson = catchAsyncErorr(async (req, res, next) => {
+  const { syllabusId, lessonName } = req.body;
+
+  const Syllabus = await SyllabusModel.findOne(
+    { _id:syllabusId , "modules.lessons.name": lessonName},
+  );
+
+  if (!Syllabus) {
+    return next(new ErrorHandler("Unable to find lessons", 500));
+  }
+  res.status(200).json({
+    status: "success",
+    data: Syllabus,
+  });
+});
+
 
 // Add Lesson API
 exports.addLesson = catchAsyncErorr(async (req, res, next) => {

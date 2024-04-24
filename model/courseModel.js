@@ -30,7 +30,7 @@ const courseSchema = new mongoose.Schema({
     enrolement:{
         type:Number,
         require:true,
-        min:[0,"enrolement canot be negative"],
+        min:[0,"enrollement canot be negative"],
         default:0
     },
     type:{

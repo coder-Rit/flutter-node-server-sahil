@@ -12,12 +12,10 @@ const {  generateRandomString } = require("../utils/functions");
 // Updated signUp function to handle errors properly
 exports.student_signUp = catchAsyncErorr(async (req, res, next) => {
 
-  const student_id = `${req.body.name.split(" ")[0]}_${generateRandomString(
-    6
-  )}`;
+   
   let userData = {
     ...req.body,
-    student_id,
+    
   };
 
   const newAcc = await studentModel.create(userData);
@@ -26,9 +24,9 @@ exports.student_signUp = catchAsyncErorr(async (req, res, next) => {
 
 // loged in
 exports.student_login = catchAsyncErorr(async (req, res, next) => {
-  const { password, student_id } = req.body;
+  const { password, phone } = req.body;
 
-  const user = await studentModel.findOne({ student_id }).select("+password");
+  const user = await studentModel.findOne({ phone }).select("+password");
 
   if (!user) {
     return next(new ErrorHandler("User does not exist", 404));
@@ -64,3 +62,19 @@ exports.student_resetPassword = catchAsyncErorr(async (req, res, next) => {
 });
 
 
+
+//  follow class belongs to student
+exports.followClass = catchAsyncErorr(async (req, res, next) => {
+  const { className, studentId } = req.body;
+
+  const student = await studentModel.findByIdAndUpdate(studentId,{
+    followedClass: className,
+  });
+
+  res.status(200).json({
+    status: "success",
+    data: student,
+  });
+});
+
+ 

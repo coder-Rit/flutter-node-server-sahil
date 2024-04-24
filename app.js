@@ -31,7 +31,8 @@ connectTODatabase()
 
  
 app.get("/",(req,res,next)=>{
-  res.send("working fine")
+  res.send("🐲🐲 Working fine 🐲🐲")
+    console.log("🐲🐲 Working fine 🐲🐲")
 })
 
 const userRouter = require('./router/userRouter') 
@@ -40,6 +41,8 @@ const courseRouter = require('./router/courseRouter')
 const assignmentRouter = require('./router/assignmentRouter') 
 const syllabusRouter = require('./router/syllabusRouter') 
 const videoLectureRouter = require('./router/videoLectureRouter') 
+const enrolledCourseRouter = require('./router/enrolledCourseRouter') 
+const classRouter = require('./router/classRouter') 
  
 
 app.use("/api/v1", userRouter)
@@ -48,6 +51,8 @@ app.use("/api/v1", courseRouter)
 app.use("/api/v1", assignmentRouter)
 app.use("/api/v1", syllabusRouter)
 app.use("/api/v1", videoLectureRouter)
+app.use("/api/v1", enrolledCourseRouter)
+app.use("/api/v1", classRouter)
  
 
  

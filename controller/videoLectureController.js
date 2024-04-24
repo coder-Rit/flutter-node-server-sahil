@@ -14,6 +14,23 @@ async function idModuleFound(courseId, moduleName, next) {
   }
 }
 
+// get video lecuters  API
+exports.getVideoLecture = catchAsyncErorr(async (req, res, next) => {
+  const { lessonId } = req.body;
+
+  const videoLectureData = await videoLectureModel.findOne({lessonId});
+
+  if (!videoLectureData) {
+    return next(new ErrorHandler("Unable to find lesson details", 404));
+  }
+
+  res.status(200).json({
+    status: "success",
+    data: videoLectureData,
+  });
+});
+
+
 // update video lecuters  API
 exports.updateVideoLecture = catchAsyncErorr(async (req, res, next) => {
   const { videoLecuterId, data } = req.body;
@@ -34,6 +51,30 @@ exports.removeVideoLecture = catchAsyncErorr(async (req, res, next) => {
 
   const videoLectureData = await videoLectureModel.findByIdAndDelete(videoLecuterId);
 
+  res.status(200).json({
+    status: "success",
+    data: videoLectureData,
+  });
+});
+
+
+// set complete true
+exports.completeVideoLecture = catchAsyncErorr(async (req, res, next) => {
+  const { videoLecuterId, chapterName } = req.body;
+
+  const videoLectureData = await videoLectureModel.findOneAndUpdate(
+    { _id:videoLecuterId, "chapters.chapterName": chapterName },
+    {
+      $set: {
+        "chapters.$.completed": true,
+      },
+    },
+    { new: true }
+  );
+
+  if (!videoLectureData) {
+    return next(new ErrorHandler("Unable to update module", 404));
+  }
   res.status(200).json({
     status: "success",
     data: videoLectureData,

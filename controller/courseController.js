@@ -32,6 +32,8 @@ exports.searchCourseByCategory = catchAsyncError(async (req, res, next) => {
 });
 
 
+
+
 // Create Course API
 exports.createCourse = catchAsyncError(async (req, res, next) => {
   const course = await courseModel.create(req.body);
@@ -40,6 +42,7 @@ exports.createCourse = catchAsyncError(async (req, res, next) => {
     data: course,
   });
 });
+
 
 // Update Course API
 exports.updateCourse = catchAsyncError(async (req, res, next) => {
