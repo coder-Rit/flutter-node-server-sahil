@@ -43,6 +43,8 @@ const syllabusRouter = require('./router/syllabusRouter')
 const videoLectureRouter = require('./router/videoLectureRouter') 
 const enrolledCourseRouter = require('./router/enrolledCourseRouter') 
 const classRouter = require('./router/classRouter') 
+const attendenceRouter = require('./router/attendenceRouter') 
+const bannerRouter = require('./router/bannerRouter') 
  
 
 app.use("/api/v1", userRouter)
@@ -53,6 +55,8 @@ app.use("/api/v1", syllabusRouter)
 app.use("/api/v1", videoLectureRouter)
 app.use("/api/v1", enrolledCourseRouter)
 app.use("/api/v1", classRouter)
+app.use("/api/v1", attendenceRouter)
+app.use("/api/v1", bannerRouter)
  
 
  
