@@ -47,6 +47,8 @@ const attendenceRouter = require('./router/attendenceRouter')
 const bannerRouter = require('./router/bannerRouter') 
 const practiceRouter = require('./router/practiceRouter') 
 const resultRouter = require('./router/resultRouter') 
+const notificationRouter = require('./router/notificationRouter') 
+const blogRouter = require('./router/blogRouter') 
  
 
 app.use("/api/v1", userRouter)
@@ -61,6 +63,8 @@ app.use("/api/v1", attendenceRouter)
 app.use("/api/v1", bannerRouter)
 app.use("/api/v1", practiceRouter)
 app.use("/api/v1", resultRouter)
+app.use("/api/v1", notificationRouter)
+app.use("/api/v1", blogRouter)
  
 
  

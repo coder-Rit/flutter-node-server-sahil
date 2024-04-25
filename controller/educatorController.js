@@ -1,5 +1,4 @@
-const fs = require("fs");
-const path = require("path");
+ 
 
 const catchAsyncErorr = require("../middleware/catchAsyncErorr");
 const educatorModel = require("../model/educatorModel");
