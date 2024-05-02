@@ -1,0 +1,38 @@
+
+const searchCategoryModel = require("../model/searchCategoryModel");
+const catchAsyncErorr = require("../middleware/catchAsyncErorr");
+const ErrorHandler = require("../utils/errorHandler");
+
+
+exports.addsearchCategory = catchAsyncErorr(async (req, res, next) => {
+  const { categoryName } = req.body;
+
+  const newsearchCategory = await searchCategoryModel.create({
+    categoryName,
+  });
+
+  res.status(201).json({ status: "success", data: newsearchCategory });
+});
+
+
+
+exports.removesearchCategory = catchAsyncErorr(async (req, res, next) => {
+  const { categoryId } = req.body;
+
+  const deletedsearchCategory = await searchCategoryModel.findByIdAndDelete(
+    categoryId
+  );
+
+  if (!deletedsearchCategory) {
+    return next(new ErrorHandler("search Category not found", 404));
+  }
+
+  res.status(200).json({ status: "success", data: deletedsearchCategory });
+});
+
+
+exports.getAllsearchCategories = catchAsyncErorr(async (req, res, next) => {
+  const searchCategories = await searchCategoryModel.find();
+
+  res.status(200).json({ status: "success", data: searchCategories });
+});

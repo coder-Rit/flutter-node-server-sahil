@@ -9,9 +9,11 @@ exports.searchCourse = catchAsyncError(async (req, res, next) => {
   const { regexValue } = req.body;
 
   const regex = new RegExp(regexValue, "i");
-  const courses = await courseModel.find({
-    $or: [{ title: { $regex: regex } }, { category: { $regex: regex } }],
-  }).exec();
+  const courses = await courseModel
+    .find({
+      $or: [{ title: { $regex: regex } }, { category: { $regex: regex } }],
+    })
+    .exec();
 
   res.status(200).json({
     status: "success",
@@ -23,16 +25,25 @@ exports.searchCourse = catchAsyncError(async (req, res, next) => {
 exports.searchCourseByCategory = catchAsyncError(async (req, res, next) => {
   const { category } = req.body;
   const regex = new RegExp(category, "i");
-  const courses = await courseModel.find({  category: { $regex: regex }  }).exec();
+  const courses = await courseModel
+    .find({ category: { $regex: regex } })
+    .exec();
 
   res.status(200).json({
     status: "success",
     data: courses,
   });
 });
+// free course by catorgy API
+exports.searchCourseFree = catchAsyncError(async (req, res, next) => {
+  
+  const courses = await courseModel.find({ type: "free" });
 
-
-
+  res.status(200).json({
+    status: "success",
+    data: courses,
+  });
+});
 
 // Create Course API
 exports.createCourse = catchAsyncError(async (req, res, next) => {
@@ -42,7 +53,6 @@ exports.createCourse = catchAsyncError(async (req, res, next) => {
     data: course,
   });
 });
-
 
 // Update Course API
 exports.updateCourse = catchAsyncError(async (req, res, next) => {

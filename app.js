@@ -49,6 +49,8 @@ const practiceRouter = require('./router/practiceRouter')
 const resultRouter = require('./router/resultRouter') 
 const notificationRouter = require('./router/notificationRouter') 
 const blogRouter = require('./router/blogRouter') 
+const featuredCategoryRouter = require('./router/featuredCategoryRouter') 
+const searchCategoryRouter = require('./router/searchCategoryRouter') 
  
 
 app.use("/api/v1", userRouter)
@@ -65,6 +67,8 @@ app.use("/api/v1", practiceRouter)
 app.use("/api/v1", resultRouter)
 app.use("/api/v1", notificationRouter)
 app.use("/api/v1", blogRouter)
+app.use("/api/v1", featuredCategoryRouter)
+app.use("/api/v1", searchCategoryRouter)
  
 
  

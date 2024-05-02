@@ -1,5 +1,5 @@
 const express = require('express')
-const { createCourse, updateCourse, incrementReview, decrementReview, updateRating, deleteCourse, incrementEnrolement, decrementEnrolement, searchCourse, searchCourseByCategory, findSubjects } = require('../controller/courseController')
+const { createCourse, updateCourse, incrementReview, decrementReview, updateRating,searchCourseFree, deleteCourse, incrementEnrolement, decrementEnrolement, searchCourse, searchCourseByCategory, findSubjects } = require('../controller/courseController')
 const { createCourseDetail, updateCourseDetail, deleteCourseDetail, getCourseDetails } = require('../controller/courseDetailContorller')
  
 
@@ -11,6 +11,7 @@ const Router = express.Router()
 
 Router.route("/student/searchCourse").post(searchCourse) 
 Router.route("/student/searchCourseByCategory").post(searchCourseByCategory) 
+Router.route("/student/searchCourse/free").get(searchCourseFree) 
 
 Router.route("/educator/createCourse").post(createCourse) 
 Router.route("/educator/updateCourse").put(updateCourse)
